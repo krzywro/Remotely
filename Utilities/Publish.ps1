@@ -120,23 +120,23 @@ if ((Test-Path -Path "$Root\Agent\bin\Release\net6.0\linux-x64\publish") -eq $tr
 
 # Publish Core clients.
 dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion --runtime win10-x64 --self-contained --configuration Release --output "$Root\Agent\bin\Release\net6.0\win10-x64\publish" "$Root\Agent"
-dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion --runtime linux-x64 --self-contained --configuration Release --output "$Root\Agent\bin\Release\net6.0\linux-x64\publish" "$Root\Agent"
-dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion --runtime win10-x86 --self-contained --configuration Release --output "$Root\Agent\bin\Release\net6.0\win10-x86\publish" "$Root\Agent"
+#dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion --runtime linux-x64 --self-contained --configuration Release --output "$Root\Agent\bin\Release\net6.0\linux-x64\publish" "$Root\Agent"
+#dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion --runtime win10-x86 --self-contained --configuration Release --output "$Root\Agent\bin\Release\net6.0\win10-x86\publish" "$Root\Agent"
 
 New-Item -Path "$Root\Agent\bin\Release\net6.0\win10-x64\publish\Desktop\" -ItemType Directory -Force
-New-Item -Path "$Root\Agent\bin\Release\net6.0\win10-x86\publish\Desktop\" -ItemType Directory -Force
-New-Item -Path "$Root\Agent\bin\Release\net6.0\linux-x64\publish\Desktop\" -ItemType Directory -Force
+N#ew-Item -Path "$Root\Agent\bin\Release\net6.0\win10-x86\publish\Desktop\" -ItemType Directory -Force
+#New-Item -Path "$Root\Agent\bin\Release\net6.0\linux-x64\publish\Desktop\" -ItemType Directory -Force
 
 
 # Publish Linux ScreenCaster
-dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=packaged-linux-x64 --configuration Release "$Root\Desktop.XPlat\"
+#dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=packaged-linux-x64 --configuration Release "$Root\Desktop.XPlat\"
 
 # Publish Linux GUI App
-dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=desktop-linux-x64 --configuration Release "$Root\Desktop.XPlat\"
+#dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=desktop-linux-x64 --configuration Release "$Root\Desktop.XPlat\"
 
 
 # Publish Windows ScreenCaster (32-bit)
-dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=packaged-win-x86 --configuration Release "$Root\Desktop.Win"
+#dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=packaged-win-x86 --configuration Release "$Root\Desktop.Win"
 
 # Publish Windows ScreenCaster (64-bit)
 dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=packaged-win-x64 --configuration Release "$Root\Desktop.Win"
@@ -150,7 +150,7 @@ if ($SignAssemblies) {
     &"$Root\Utilities\signtool.exe" sign /f "$CertificatePath" /p $CertificatePassword /t http://timestamp.digicert.com "$Root\Server\wwwroot\Content\Win-x64\Remotely_Desktop.exe"
 }
 
-
+<#
 # Publish Windows GUI App (32-bit)
 dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:PublishProfile=desktop-win-x86 --configuration Release "$Root\Desktop.Win"
 &"$MSBuildPath" "$Root\Desktop.Win" -t:Restore -t:Publish -p:PublishProfile="ClickOnce-x86.pubxml" -p:Configuration=Release -p:Platform=x86 -p:ApplicationVersion=$CurrentVersion -p:Version=$CurrentVersion -p:FileVersion=$CurrentVersion -p:PublishDir="$Root\Server\wwwroot\Content\Win-x86\ClickOnce\"
@@ -158,7 +158,7 @@ dotnet publish /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion -p:Publ
 if ($SignAssemblies) {
     &"$Root\Utilities\signtool.exe" sign /f "$CertificatePath" /p $CertificatePassword /t http://timestamp.digicert.com "$Root\Server\wwwroot\Content\Win-x86\Remotely_Desktop.exe"
 }
-
+#>
 # Build installer.
 &"$MSBuildPath" "$Root\Agent.Installer.Win" /t:Restore 
 &"$MSBuildPath" "$Root\Agent.Installer.Win" /t:Build /p:Configuration=Release /p:Platform=AnyCPU /p:Version=$CurrentVersion /p:FileVersion=$CurrentVersion
@@ -175,6 +175,7 @@ while ((Test-Path -Path "$PublishDir\Remotely-Win10-x64.zip") -eq $false){
 }
 Move-Item -Path "$PublishDir\Remotely-Win10-x64.zip" -Destination "$Root\Server\wwwroot\Content\Remotely-Win10-x64.zip" -Force
 
+<#
 $PublishDir =  "$Root\Agent\bin\Release\net6.0\win10-x86\publish"
 Compress-Archive -Path "$PublishDir\*" -DestinationPath "$PublishDir\Remotely-Win10-x86.zip" -Force
 while ((Test-Path -Path "$PublishDir\Remotely-Win10-x86.zip") -eq $false){
@@ -188,7 +189,7 @@ while ((Test-Path -Path "$PublishDir\Remotely-Linux.zip") -eq $false){
     Start-Sleep -Seconds 1
 }
 Move-Item -Path "$PublishDir\Remotely-Linux.zip" -Destination "$Root\Server\wwwroot\Content\Remotely-Linux.zip" -Force
-
+#>
 
 
 if ($RID.Length -gt 0 -and $OutDir.Length -gt 0) {

@@ -1,0 +1,35 @@
+w folderze Utilities:
+.\publish.ps1 -hostname https://remote.krzywro.pl
+
+w folderze Server:
+dotnet publish -p:PublishProfile=FolderProfile
+docker buildx build --platform=linux/arm64 -t wroblek/remotely:latest --push --no-cache .
+
+
+Użycie:
+scp -r wwwroot/Content user@host:folder/clients
+
+przykładowy docker-compose.yaml
+version: '3.7'
+services:
+  app:
+    image: 'wroblek/remotely:latest'
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./remotely-data:/remotely-data
+      - ./clients:/var/www/remotely/wwwroot/Content
+    dns:
+      - 192.168.210.1
+    networks:
+      default:
+        # static IP address for nginxproxymanager
+        ipv4_address: 172.16.1.2
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+     config:
+       # your chosen docker network here
+       - subnet: 172.16.1.0/24
